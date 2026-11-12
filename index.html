@@ -3,167 +3,433 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#151412">
 <title>Rad van Fortuin</title>
 <meta name="description" content="Een rad van fortuin waarbij je per woord het gewicht instelt en het rad met een link deelt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f5f5f7; --card: #ffffff; --label: #1d1d1f; --secondary: #6e6e73; --tertiary: #aeaeb2;
-    --separator: rgba(60, 60, 67, .16); --fill: rgba(120, 120, 128, .12); --fill-strong: rgba(120, 120, 128, .2);
-    --blue: #0071e3; --blue-hover: #0077ed; --green: #34c759; --bar: rgba(245, 245, 247, .72);
-    --shadow: 0 20px 50px -20px rgba(0, 0, 0, .28);
-    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #000000; --card: #1c1c1e; --label: #f5f5f7; --secondary: #98989d; --tertiary: #636366;
-      --separator: rgba(84, 84, 88, .6); --fill: rgba(120, 120, 128, .24); --fill-strong: rgba(120, 120, 128, .36);
-      --blue: #0a84ff; --blue-hover: #409cff; --green: #30d158; --bar: rgba(0, 0, 0, .72);
-      --shadow: 0 20px 50px -20px rgba(0, 0, 0, .8);
-    }
-  }
-  * { box-sizing: border-box; }
-  html, body { overflow-x: clip; }
-  body {
-    margin: 0; background: var(--bg); color: var(--label);
-    font: 400 17px/1.47 var(--font); letter-spacing: -0.022em; -webkit-font-smoothing: antialiased;
-  }
-  button, input, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
-  button { cursor: pointer; }
-  :focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 60%, transparent); outline-offset: 2px; }
+/* Hallmark · v2.0.0 · theme: Kiln (manual deal, graphite and champagne) · genre: atmospheric · shape: app screen · redesign: full · signature: weighted wheel in engraved graphite */
+/* Hallmark · pre-emit critique: P4 H5 E4 S5 R4 V3 · the wheel carries the material, leaving the editor flat and the result easy to find */
+:root {
+  color-scheme: dark;
+  --bg: #151412;
+  --panel: #1d1b18;
+  --hover: #292621;
+  --ink: #f2eee6;
+  --muted: #b2aaa0;
+  --rule: #38342e;
+  --control: #696155;
+  --accent: #dbc8a3;
+  --accent-hover: #efe0c4;
+  --accent-ink: #251e14;
+  --shadow: #0a0908a6;
+  --clear: transparent;
+  --rim-edge: #827666;
+  --rim-dark: #201e1b;
+  --rim-light: #53504a;
+  --rim-tick: #aaa08e;
+  --rim-tick-soft: #6d655a;
+  --dial-seam: #1a1917;
+  --dial-light: #fff5df18;
+  --dial-shade: #100f0e26;
+  --wedge-1: #393a36;
+  --wedge-2: #aaa08e;
+  --wedge-3: #514a42;
+  --wedge-4: #bcb19a;
+  --wedge-5: #323231;
+  --wedge-6: #a19382;
+  --wedge-7: #4c4c48;
+  --wedge-8: #b2a69a;
+  --font: "Geist", system-ui, sans-serif;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --radius: 999px;
+  --ease: 160ms ease;
+}
+* { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+body {
+  margin: 0;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 1rem/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea { color: inherit; font: inherit; }
+button { cursor: pointer; }
+button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+::selection { background: var(--accent); color: var(--accent-ink); }
 
-  /* Balk */
-  .bar {
-    position: sticky; top: 0; z-index: 10; background: var(--bar);
-    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid var(--separator);
-  }
-  .bar > div { display: flex; align-items: center; justify-content: space-between; height: 52px; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-  h1 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
-  .link { background: none; border: 0; padding: 8px 0; color: var(--blue); font-size: 15px; border-radius: 8px; }
-  .link:hover { text-decoration: underline; }
-  .link:active { opacity: .6; }
+.wrap { width: min(100% - 96px, 1232px); margin-inline: auto; }
+.bar > .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding-block: 36px 27px;
+  border-bottom: 1px solid var(--rule);
+}
+h1, h2, #result { font-family: var(--font-display); font-weight: 400; min-width: 0; overflow-wrap: anywhere; }
+h1 { margin: 0; font-size: 4.5rem; line-height: .98; letter-spacing: -.025em; }
+h2 { margin: 0; font-size: 2rem; line-height: 1; letter-spacing: -.01em; }
+.button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding-inline: 18px;
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  background: var(--clear);
+  font-size: .875rem;
+  font-weight: 500;
+  transition: background-color var(--ease), border-color var(--ease), transform var(--ease);
+}
+.button:hover:not(:disabled) { background: var(--hover); border-color: var(--muted); }
+.button:active:not(:disabled) { transform: scale(.97); }
+.icon { display: block; width: 17px; height: 17px; flex: none; }
 
-  main.wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 56px; align-items: start; padding-top: 40px; padding-bottom: 64px; }
+main.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(370px, 1fr);
+  gap: 48px;
+  align-items: start;
+  padding-block: 32px 60px;
+}
+.stage {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  padding-top: 7px;
+}
+.wheel-wrap {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 550px, max(390px, calc(100svh - 286px)));
+  aspect-ratio: 1;
+}
+.wheel-wrap::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 1.4%;
+  border-radius: 50%;
+  box-shadow: 0 17px 29px var(--shadow);
+  pointer-events: none;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.stage[data-spinning] canvas, .stage[data-empty] canvas { cursor: default; }
+.pointer {
+  position: absolute;
+  z-index: 1;
+  top: -1%;
+  left: 50%;
+  width: 6.3%;
+  height: auto;
+  transform: translateX(-50%);
+  color: var(--accent);
+  filter: drop-shadow(0 3px 3px var(--shadow));
+  pointer-events: none;
+}
+.pointer path + path { fill: var(--accent-hover); }
+.playbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: min(100%, 570px);
+  min-height: 84px;
+  border-top: 1px solid var(--rule);
+  padding-block: 16px 0;
+}
+.result-group { min-width: 0; }
+.result-label { display: block; font-size: .8125rem; color: var(--muted); }
+#result {
+  margin: 2px 0 0;
+  font-size: 2rem;
+  line-height: 1.03;
+  text-wrap: balance;
+}
+#result.idle { color: var(--muted); }
+#result.is-spinning { color: var(--muted); }
+#spin {
+  justify-content: space-between;
+  min-width: 151px;
+  min-height: 50px;
+  padding-inline: 20px;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+#spin:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+#spin:disabled { opacity: .55; }
 
-  /* Rad */
-  .stage { display: grid; justify-items: center; gap: 28px; text-align: center; }
-  #result {
-    margin: 0; min-height: 1.08em; max-width: 100%; font-size: 48px; line-height: 1.08; font-weight: 600;
-    letter-spacing: -0.03em; overflow-wrap: anywhere; text-wrap: balance; transition: opacity .25s ease;
-  }
-  #result.idle { color: var(--tertiary); }
-  #result.is-spinning { opacity: .3; }
-  .wheel-wrap { position: relative; width: min(100%, 540px, max(260px, calc(100dvh - 330px))); }
-  canvas { display: block; width: 100%; height: auto; cursor: pointer; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .18)); }
-  .pointer {
-    position: absolute; top: -2.5%; left: 50%; z-index: 2; width: 5.5%; height: 7%; translate: -50% 0;
-    background: var(--label); clip-path: polygon(8% 0, 92% 0, 100% 12%, 56% 100%, 44% 100%, 0 12%);
-  }
-  #spin {
-    min-width: 180px; height: 50px; padding: 0 32px; border: 0; border-radius: 980px;
-    background: var(--blue); color: #fff; font-size: 17px; font-weight: 500;
-    transition: background-color .15s ease, scale .15s ease;
-  }
-  #spin:hover { background: var(--blue-hover); }
-  #spin:active { scale: .97; }
-  #spin:disabled { background: var(--fill-strong); color: var(--tertiary); cursor: not-allowed; scale: none; }
+.side { min-width: 0; border-inline-start: 1px solid var(--rule); padding-inline-start: 32px; }
+.editor { display: grid; gap: 23px; min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+.editor:disabled .weight, .editor:disabled .del, .editor:disabled .add,
+.editor:disabled .link, .editor:disabled .opt input { opacity: .55; }
+.group-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; margin-bottom: 10px; }
+.link {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: var(--clear);
+  color: var(--muted);
+  font-size: .8125rem;
+  text-decoration: underline;
+  text-decoration-color: var(--control);
+  text-underline-offset: 4px;
+}
+.link:hover:not(:disabled) { color: var(--ink); text-decoration-color: var(--accent); }
+.table-head, .row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 46px 32px;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 10px;
+}
+.table-head { padding-block: 9px; color: var(--muted); font-size: .75rem; }
+.table-head span:nth-child(2) { text-align: center; }
+.table-head span:last-child { text-align: right; }
+.row { min-height: 53px; padding-block: 5px; background: var(--panel); border-top: 1px solid var(--rule); }
+.row:focus-within { background: var(--hover); }
+.word { display: grid; grid-template-columns: 4px minmax(0, 1fr); gap: 9px; align-items: center; }
+.dot { width: 4px; height: 17px; border: 1px solid var(--rim-edge); border-radius: 2px; }
+.row textarea {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 2px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--clear);
+  resize: none;
+  overflow: hidden;
+  line-height: 1.3;
+}
+.row textarea::placeholder { color: var(--muted); }
+.row textarea:focus-visible, .weight input:focus-visible { outline-offset: -2px; }
+.weight {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 30px;
+  align-items: center;
+  height: 36px;
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+}
+.weight button, .del {
+  position: relative;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--clear);
+  color: var(--muted);
+  line-height: 1;
+}
+.weight button { font-size: 1.0625rem; }
+.weight button:hover:not(:disabled), .del:hover:not(:disabled) { background: var(--hover); color: var(--ink); }
+.weight input {
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: var(--clear);
+  text-align: center;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+}
+.weight input::-webkit-inner-spin-button, .weight input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.pct { text-align: right; color: var(--muted); font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.del { display: grid; place-items: center; width: 32px; min-height: 36px; }
+.del .icon { width: 13px; height: 13px; }
+.add {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 10px;
+  border: 0;
+  border-block: 1px solid var(--rule);
+  background: var(--clear);
+  color: var(--ink);
+  text-align: left;
+  font-size: .875rem;
+  font-weight: 500;
+}
+.add:hover:not(:disabled) { background: var(--panel); }
+.add .icon { width: 15px; height: 15px; color: var(--accent); }
+.note { margin: 9px 0 0; color: var(--muted); font-size: .8125rem; line-height: 1.55; }
+.settings h2 { margin-bottom: 11px; }
+.opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+  padding-block: 8px;
+  border-top: 1px solid var(--rule);
+  cursor: pointer;
+  font-size: .9375rem;
+}
+.opt:last-of-type { border-bottom: 1px solid var(--rule); }
+.opt input {
+  flex: none;
+  position: relative;
+  width: 40px;
+  height: 24px;
+  margin: 0;
+  border: 1px solid var(--control);
+  border-radius: var(--radius);
+  background: var(--panel);
+  cursor: inherit;
+  appearance: none;
+}
+.opt input::before {
+  content: "";
+  position: absolute;
+  inset: 3px auto auto 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform var(--ease);
+}
+.opt input:checked { background: var(--accent); border-color: var(--accent); }
+.opt input:checked::before { transform: translateX(16px); background: var(--accent-ink); }
+.opt:hover input:not(:checked, :disabled) { border-color: var(--muted); }
+.noscript { padding-block: 18px; color: var(--muted); }
 
-  /* Lijst */
-  .side { display: grid; gap: 28px; }
-  .group-head { display: flex; align-items: baseline; justify-content: space-between; padding: 0 16px 6px; }
-  .group-head h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
-  .card { background: var(--card); border-radius: 18px; }
-  .row { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto 44px 28px; gap: 10px; align-items: center; padding: 8px 12px 8px 16px; position: relative; }
-  .row + .row::before, .add::before { content: ""; position: absolute; top: 0; left: 38px; right: 0; height: 1px; background: var(--separator); }
-  .dot { width: 12px; height: 12px; border-radius: 50%; }
-  .row textarea {
-    display: block; width: 100%; min-width: 0; padding: 6px 0; border: 0; background: none; resize: none; overflow: hidden;
-    line-height: 1.3; border-radius: 6px;
+@media (max-width: 1080px) {
+  .wrap { width: calc(100% - 64px); }
+  main.wrap { gap: 28px; }
+  .side { padding-inline-start: 22px; }
+}
+@media (max-width: 820px) {
+  .wrap { width: min(100% - 40px, 600px); }
+  .bar > .wrap { padding-block: 24px 20px; }
+  h1 { font-size: 3.5rem; }
+  main.wrap { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-block: 25px 38px; }
+  .stage { padding-top: 0; gap: 13px; }
+  .wheel-wrap { width: min(100%, 485px); }
+  .playbar { width: 100%; }
+  .side { border-inline-start: 0; padding-inline-start: 0; }
+}
+@media (max-width: 480px) {
+  .wrap { width: calc(100% - 32px); }
+  .bar > .wrap { gap: 10px; }
+  h1 { font-size: 2.5rem; }
+  #share { position: relative; min-width: 44px; padding-inline: 12px; }
+  #share .share-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  .row textarea::placeholder { color: var(--tertiary); }
-  .row textarea:focus-visible, .weight input:focus-visible { outline: none; }
-  .row:focus-within .dot { box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 35%, transparent); }
-  .weight { display: grid; grid-template-columns: 32px 38px 32px; align-items: center; height: 32px; background: var(--fill); border-radius: 8px; }
-  .weight button { height: 32px; padding: 0; border: 0; background: none; font-size: 20px; line-height: 1; border-radius: 8px; }
-  .weight button:hover { background: var(--fill); }
-  .weight button:active { background: var(--fill-strong); }
-  .weight input {
-    width: 100%; height: 24px; padding: 0; border: 0; border-inline: 1px solid var(--separator); background: none;
-    text-align: center; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; appearance: textfield; -moz-appearance: textfield;
+  #share[data-copied] .share-label {
+    z-index: 2;
+    inset: calc(100% + 7px) 0 auto auto;
+    width: max-content;
+    height: auto;
+    padding: 5px 10px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--panel);
+    clip-path: none;
   }
-  .weight input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .pct { text-align: right; font-size: 15px; color: var(--secondary); font-variant-numeric: tabular-nums; }
-  .del { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--tertiary); }
-  .del:hover { background: var(--fill); color: var(--label); }
-  .del svg { width: 12px; height: 12px; }
-  .add { position: relative; display: block; width: 100%; padding: 13px 16px 13px 38px; border: 0; background: none; text-align: left; color: var(--blue); border-radius: 0 0 18px 18px; }
-  .add:only-child { border-radius: 18px; }
-  .add:hover { background: var(--fill); }
-  .note { margin: 8px 16px 0; font-size: 13px; line-height: 1.4; color: var(--secondary); letter-spacing: -0.01em; }
-
-  .opt { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 16px; position: relative; cursor: pointer; }
-  .opt + .opt::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--separator); }
-  .opt input {
-    flex: none; appearance: none; -webkit-appearance: none; position: relative; width: 51px; height: 31px; margin: 0;
-    border-radius: 31px; background: var(--fill-strong); cursor: pointer; transition: background-color .2s ease;
-  }
-  .opt input::before {
-    content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, .15), 0 1px 1px rgba(0, 0, 0, .16); transition: translate .2s ease;
-  }
-  .opt input:checked { background: var(--green); }
-  .opt input:checked::before { translate: 20px 0; }
-
-  @media (max-width: 860px) {
-    main.wrap { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-top: 28px; }
-    .wrap { padding: 0 16px; }
-    .wheel-wrap { width: min(100%, 480px); }
-    #result { font-size: 36px; }
-    .stage { gap: 22px; }
-  }
-  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+  .playbar { min-height: 74px; padding-top: 12px; }
+  #result { font-size: 1.75rem; }
+  #spin { min-width: 110px; padding-inline: 13px; gap: 7px; }
+  .table-head, .row { gap: 5px; padding-inline: 6px; }
+  .row { min-height: 56px; }
+  .word { gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+@media (forced-colors: active) {
+  .pointer { color: CanvasText; }
+  .opt input { appearance: auto; width: 24px; }
+  .opt input::before { display: none; }
+}
 </style>
 </head>
 <body>
 <header class="bar">
   <div class="wrap">
     <h1>Rad van Fortuin</h1>
-    <button type="button" class="link" id="share">Kopieer deellink</button>
+    <button type="button" class="button" id="share">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M10 14l4-4m-6.8 2.8-2 2a3 3 0 0 0 4.2 4.2l2-2m1.2-9.8 2-2a3 3 0 0 1 4.2 4.2l-2 2"/></svg>
+      <span class="share-label" id="share-label" aria-live="polite">Kopieer deellink</span>
+    </button>
   </div>
 </header>
 
+<noscript><p class="wrap noscript">Schakel JavaScript in om het rad te gebruiken.</p></noscript>
+
 <main class="wrap">
   <section class="stage" aria-label="Het rad">
-    <p id="result" class="idle" aria-live="polite">Draai het rad</p>
     <div class="wheel-wrap">
-      <div class="pointer"></div>
-      <canvas id="wheel" width="1000" height="1000" aria-label="Rad van fortuin"></canvas>
+      <canvas id="wheel" width="1000" height="1000" role="img" aria-label="Rad van fortuin"></canvas>
+      <svg class="pointer" viewBox="0 0 40 49" aria-hidden="true">
+        <path fill="currentColor" d="M2 3h36l-2 9-15 32a1 1 0 0 1-2 0L4 12Z"/>
+        <path d="M20 3h18l-2 9-15 32a1 1 0 0 1-1 1Z"/>
+      </svg>
     </div>
-    <button type="button" id="spin">Draai</button>
+    <div class="playbar">
+      <div class="result-group">
+        <span class="result-label" id="result-label">Uitslag</span>
+        <p id="result" class="idle" role="status" aria-labelledby="result-label">—</p>
+      </div>
+      <button type="button" class="button" id="spin" disabled>
+        <span>Draai</span>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9a7.5 7.5 0 1 0 .4 5.5M19 4v5h-5"/></svg>
+      </button>
+    </div>
   </section>
 
   <section class="side" aria-label="Woorden en gewichten">
-    <div>
-      <div class="group-head">
-        <h2>Woorden</h2>
-        <button type="button" class="link" id="reset">Gewichten naar 1</button>
-      </div>
-      <div class="card">
+    <fieldset class="editor" id="editor" aria-label="Rad aanpassen">
+      <div>
+        <div class="group-head">
+          <h2>Woorden</h2>
+          <button type="button" class="link" id="reset">Gewichten naar 1</button>
+        </div>
+        <div class="table-head" aria-hidden="true"><span>Woord</span><span>Gewicht</span><span>Kans</span></div>
         <div id="rows"></div>
-        <button type="button" class="add" id="add">Woord toevoegen</button>
+        <button type="button" class="add" id="add">
+          <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"/></svg>
+          Woord toevoegen
+        </button>
+        <p class="note">Een hoger gewicht geeft meer kans. Bij gewicht 0 valt het woord af.</p>
       </div>
-      <p class="note">Hoger gewicht = grotere kans. Gewicht 0 doet niet mee.</p>
-    </div>
-
-    <div>
-      <div class="card">
-        <label class="opt"><span>Alle vakken even groot</span><input type="checkbox" id="equal"></label>
+      <div class="settings">
+        <h2>Instellingen</h2>
+        <label class="opt"><span>Alle vakken even groot</span><input type="checkbox" id="equal" aria-describedby="equal-note"></label>
         <label class="opt"><span>Winnaar daarna op gewicht 0</span><input type="checkbox" id="remove"></label>
+        <p class="note" id="equal-note">Even grote vakken veranderen de kansen niet.</p>
+        <p class="note">Je instellingen worden bewaard in deze browser. De deellink opent het rad met dezelfde woorden en gewichten.</p>
       </div>
-      <p class="note">Met even grote vakken blijven de gewichten verborgen; de kansen veranderen niet. Alles wordt bewaard in deze browser, en met de deellink opent iemand anders het rad met dezelfde woorden en gewichten.</p>
-    </div>
+    </fieldset>
   </section>
 </main>
 
@@ -173,19 +439,25 @@ const DEFAULT = { items: [
   {t:'Pizza',w:3},{t:'Sushi',w:2},{t:'Pasta',w:2},{t:'Burger',w:1},{t:'Salade',w:1},{t:'Friet',w:1}
 ], equal:false, remove:false };
 
-// Systeemkleuren; d = donkere tekst op lichte kleur
-const WEDGES = [
-  {c:'#007aff'},{c:'#ff9500'},{c:'#34c759'},{c:'#ff2d55'},{c:'#5856d6'},
-  {c:'#ffcc00',d:1},{c:'#30b0c7'},{c:'#ff3b30'},{c:'#af52de'},{c:'#63e6e2',d:1}
-];
-const FONT = getComputedStyle(document.documentElement).getPropertyValue('--font');
-const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const styles = getComputedStyle(document.documentElement);
+const token = name => styles.getPropertyValue(name).trim();
+const FONT = token('--font');
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)');
+const WEDGES = Array.from({ length: 8 }, (_, i) => {
+  const key = '--wedge-' + (i + 1);
+  return { key, fill: token(key), light: i % 2 === 1 };
+});
+const TAU = Math.PI * 2;
 
 let state = load();
-let rot = 0, spinning = false;
+let rot = 0;
+let spinning = false;
+let selected = null;
 
 const $ = id => document.getElementById(id);
 const canvas = $('wheel'), ctx = canvas.getContext('2d');
+const stage = canvas.closest('.stage');
+const editor = $('editor');
 
 // Laatste vak krijgt een andere kleur als het anders naast dezelfde kleur zou liggen
 function wedge(i) {
@@ -212,7 +484,9 @@ function load() {
 }
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
-  try { history.replaceState(null, '', '#d=' + encodeURIComponent(JSON.stringify(state))); } catch {}
+  const hash = '#d=' + encodeURIComponent(JSON.stringify(state));
+  try { history.replaceState(null, '', hash); } catch {}
+  return hash;
 }
 
 // Actieve vakken: alleen woorden met gewicht > 0
@@ -250,10 +524,11 @@ function wrapText(text, maxW) {
 }
 // Grootste lettergrootte waarbij de (meerregelige) tekst in het vak past
 function fitLabel(text, span, outer) {
-  const MAXW = 300, MIN = 15;
+  const MAXW = 268, MIN = 17;
   const setFont = size => ctx.font = `600 ${size}px ${FONT}`;
   const room = (widest) => span >= Math.PI ? Infinity : 2 * (outer - widest) * Math.sin(span / 2) - 16;
-  for (let size = 44; size >= MIN; size -= 1) {
+  if (room(0) < MIN * 1.14) return null;
+  for (let size = 45; size >= MIN; size -= 1) {
     setFont(size);
     const lines = wrapText(text, MAXW), lineH = size * 1.14;
     const widest = Math.max(...lines.map(l => ctx.measureText(l).width));
@@ -270,37 +545,116 @@ function fitLabel(text, span, outer) {
   return { size: MIN, lines, lineH };
 }
 
+function disk(radius, fill) {
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, TAU);
+  ctx.fillStyle = fill;
+  ctx.fill();
+}
+
+function ring(radius, width, stroke) {
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, TAU);
+  ctx.lineWidth = width;
+  ctx.strokeStyle = stroke;
+  ctx.stroke();
+}
+
+function finish(stops, radius) {
+  const gradient = ctx.createLinearGradient(-radius, -radius, radius, radius);
+  stops.forEach(([offset, color]) => gradient.addColorStop(offset, color));
+  return gradient;
+}
+
 function draw() {
-  const R = 500, r = 484, outer = r - 34;
-  ctx.clearRect(0, 0, 1000, 1000);
+  const center = canvas.width / 2;
+  const face = 443;
+  const labelEdge = face - 35;
   const sl = slices();
-  const sep = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  canvas.style.transform = '';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
-  ctx.translate(R, R);
+  ctx.translate(center, center);
+
+  disk(486, finish([[0, token('--rim-light')], [.58, token('--rim-dark')], [1, token('--rim-light')]], 486));
+  ring(485, 2, token('--rim-edge'));
+  ring(478, 1, token('--rim-tick-soft'));
+  ring(450, 1, token('--rim-tick-soft'));
+  disk(face, token('--wedge-1'));
+
+  ctx.save();
   ctx.rotate(rot);
-  if (!sl.length) { ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fillStyle = 'rgba(120,120,128,.2)'; ctx.fill(); }
-  for (const s of sl) {
-    const w = WEDGES[wedge(s.i)];
-    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r, s.start, s.end); ctx.closePath();
-    ctx.fillStyle = w.c; ctx.fill();
-    if (sl.length > 1) { ctx.strokeStyle = sep; ctx.lineWidth = 5; ctx.lineJoin = 'round'; ctx.stroke(); }
-    const span = s.end - s.start;
-    const fit = fitLabel(s.t || '—', span, outer);
+  for (let i = 0; i < 120; i++) {
+    const angle = TAU * i / 120;
+    const inside = i % 5 === 0 ? 453 : 463;
+    const x = Math.cos(angle), y = Math.sin(angle);
+    ctx.beginPath();
+    ctx.moveTo(x * inside, y * inside);
+    ctx.lineTo(x * 474, y * 474);
+    ctx.lineWidth = i % 5 === 0 ? 2 : 1;
+    ctx.strokeStyle = token(i % 5 === 0 ? '--rim-tick' : '--rim-tick-soft');
+    ctx.stroke();
+  }
+
+  for (const slice of sl) {
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, face, slice.start, slice.end);
+    ctx.closePath();
+    ctx.fillStyle = WEDGES[wedge(slice.i)].fill;
+    ctx.fill();
+    if (sl.length > 1) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = token('--dial-seam');
+      ctx.stroke();
+    }
+  }
+
+  const sheen = ctx.createRadialGradient(0, 0, 73, 0, 0, face);
+  sheen.addColorStop(0, token('--dial-shade'));
+  sheen.addColorStop(.72, token('--clear'));
+  sheen.addColorStop(1, token('--dial-light'));
+  disk(face, sheen);
+  ring(face, 2, token('--rim-edge'));
+
+  for (const slice of sl) {
+    const material = WEDGES[wedge(slice.i)];
+    if (slice.i === selected) {
+      ctx.beginPath();
+      ctx.arc(0, 0, face - 7, slice.start, slice.end);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = token(material.light ? '--accent-ink' : '--accent');
+      ctx.stroke();
+    }
+
+    const span = slice.end - slice.start;
+    const fit = fitLabel(slice.t.trim() || '—', span, labelEdge);
     if (!fit) continue;
+    const angle = slice.start + span / 2;
+    const flip = Math.cos(angle + rot) < 0;
     ctx.save();
-    ctx.rotate(s.start + span / 2);
+    ctx.rotate(angle);
+    ctx.translate(labelEdge, 0);
+    if (flip) ctx.rotate(Math.PI);
     ctx.font = `600 ${fit.size}px ${FONT}`;
-    ctx.fillStyle = w.d ? '#1d1d1f' : '#ffffff'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    fit.lines.forEach((l, k) => ctx.fillText(l, outer, (k - (fit.lines.length - 1) / 2) * fit.lineH));
+    ctx.fillStyle = token(material.light ? '--accent-ink' : '--ink');
+    ctx.textAlign = flip ? 'left' : 'right';
+    ctx.textBaseline = 'middle';
+    fit.lines.forEach((line, i) => ctx.fillText(line, 0, (i - (fit.lines.length - 1) / 2) * fit.lineH));
     ctx.restore();
   }
   ctx.restore();
-  // Naaf
-  ctx.beginPath(); ctx.arc(R, R, 46, 0, Math.PI * 2); ctx.fillStyle = sep; ctx.fill();
-  ctx.beginPath(); ctx.arc(R, R, 30, 0, Math.PI * 2); ctx.fillStyle = '#ffffff'; ctx.fill();
+
+  disk(72, token('--dial-seam'));
+  disk(66, finish([[0, token('--rim-tick')], [.48, token('--rim-dark')], [1, token('--rim-light')]], 66));
+  ring(65, 2, token('--rim-edge'));
+  disk(53, finish([[0, token('--rim-light')], [1, token('--rim-dark')]], 53));
+  ring(51, 1, token('--rim-tick-soft'));
+  disk(10, token('--rim-tick'));
+  ctx.restore();
 }
 
-const CROSS = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>';
+const CROSS = '<svg class="icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>';
 const grow = el => { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
 
 function renderRows() {
@@ -310,8 +664,10 @@ function renderRows() {
     const row = document.createElement('div');
     row.className = 'row';
     row.innerHTML = `
-      <span class="dot" style="background:${WEDGES[wedge(i)].c}"></span>
-      <textarea rows="1" name="woord" autocomplete="off" maxlength="120" placeholder="Woord of zin" aria-label="Woord"></textarea>
+      <span class="word">
+        <span class="dot" aria-hidden="true" style="background:var(${WEDGES[wedge(i)].key})"></span>
+        <textarea rows="1" name="woord" autocomplete="off" maxlength="120" placeholder="Woord of zin" aria-label="Woord"></textarea>
+      </span>
       <span class="weight">
         <button type="button" data-d="-1" aria-label="Gewicht omlaag">−</button>
         <input type="number" name="gewicht" autocomplete="off" min="0" step="1" inputmode="decimal" aria-label="Gewicht">
@@ -320,7 +676,8 @@ function renderRows() {
       <span class="pct"></span>
       <button type="button" class="del" aria-label="Verwijder">${CROSS}</button>`;
     const text = row.querySelector('textarea'), num = row.querySelector('input');
-    text.value = it.t; num.value = it.w;
+    text.value = it.t;
+    num.value = it.w;
     text.oninput = () => {
       if (/[\r\n]/.test(text.value)) text.value = text.value.replace(/[\r\n]+/g, ' ');
       it.t = text.value; grow(text); changed();
@@ -331,7 +688,13 @@ function renderRows() {
       it.w = Math.max(0, Math.round((it.w + Number(b.dataset.d)) * 100) / 100);
       num.value = it.w; changed();
     });
-    row.querySelector('.del').onclick = () => { state.items.splice(i, 1); renderRows(); changed(); };
+    row.querySelector('.del').onclick = () => {
+      state.items.splice(i, 1);
+      renderRows();
+      changed();
+      const next = rows.children[Math.min(i, rows.children.length - 1)];
+      (next?.querySelector('.del') || $('add')).focus();
+    };
     rows.appendChild(row);
     grow(text);
   });
@@ -343,36 +706,83 @@ function updatePct() {
     const p = total ? state.items[i].w / total * 100 : 0;
     el.textContent = (p >= 10 || p === 0 ? p.toFixed(0) : p.toFixed(1)) + '%';
   });
-  $('spin').disabled = spinning || !active().length;
+  const empty = !active().length;
+  $('spin').disabled = spinning || empty;
+  stage.toggleAttribute('data-empty', empty);
+  const result = $('result');
+  if (result.classList.contains('idle') && !spinning) {
+    const message = empty ? 'Geen actieve woorden' : '—';
+    if (result.textContent !== message) result.textContent = message;
+  }
 }
-function changed() { save(); updatePct(); draw(); }
+
+function changed() {
+  selected = null;
+  save();
+  updatePct();
+  draw();
+}
 
 function spin() {
   if (spinning) return;
   const sl = slices();
   if (!sl.length) return;
-  // Winnaar kiezen op basis van gewicht (los van hoe groot het vak getekend is)
-  let x = Math.random() * sl.reduce((s, it) => s + it.w, 0);
-  const win = sl.find(s => (x -= s.w) < 0) || sl[sl.length - 1];
+  // De gewichten bepalen de winnaar, ook als de vakken even groot zijn.
+  let x = Math.random() * sl.reduce((sum, slice) => sum + slice.w, 0);
+  const win = sl.find(slice => (x -= slice.w) < 0) || sl[sl.length - 1];
   const span = win.end - win.start;
   const target = win.start + span * (0.1 + Math.random() * 0.8);
-  const TAU = Math.PI * 2;
-  let delta = ((-Math.PI / 2 - target - rot) % TAU + TAU) % TAU;
-  delta += TAU * (5 + Math.floor(Math.random() * 3));
-  const from = rot, dur = REDUCED ? 1 : 5500, t0 = performance.now();
-  const res = $('result');
-  spinning = true; res.classList.add('is-spinning'); updatePct();
-  (function frame(now) {
-    const t = Math.min(1, (now - t0) / dur);
-    rot = from + delta * (1 - Math.pow(1 - t, 4));
+  const delta = ((-Math.PI / 2 - target - rot) % TAU + TAU) % TAU +
+    TAU * (5 + Math.floor(Math.random() * 3));
+  const from = rot;
+  const result = $('result');
+  const restoreFocus = document.activeElement === $('spin');
+
+  spinning = true;
+  selected = null;
+  editor.disabled = true;
+  stage.setAttribute('data-spinning', '');
+  result.classList.add('is-spinning');
+  result.textContent = 'Het rad draait…';
+  updatePct();
+  draw();
+
+  function finishSpin() {
+    rot = (from + delta) % TAU;
+    spinning = false;
+    stage.removeAttribute('data-spinning');
+    editor.disabled = false;
+    if (state.remove) {
+      state.items[win.i].w = 0;
+      renderRows();
+      save();
+    } else {
+      selected = win.i;
+    }
     draw();
-    if (t < 1) return requestAnimationFrame(frame);
-    rot %= TAU; spinning = false;
-    res.textContent = win.t || '—';
-    res.classList.remove('is-spinning', 'idle');
-    if (state.remove) { state.items[win.i].w = 0; renderRows(); save(); draw(); }
+    result.classList.remove('is-spinning', 'idle');
+    result.textContent = win.t.trim() || '—';
     updatePct();
-  })(t0 + 1);
+    if (restoreFocus && document.activeElement === document.body) $('spin').focus({ preventScroll: true });
+  }
+
+  if (REDUCED.matches) {
+    finishSpin();
+    return;
+  }
+
+  const start = performance.now();
+  function frame(now) {
+    const progress = Math.min(1, (now - start) / 5500);
+    if (progress >= 1) {
+      finishSpin();
+      return;
+    }
+    const angle = delta * (1 - Math.pow(1 - progress, 4));
+    canvas.style.transform = 'rotate(' + angle + 'rad)';
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 $('spin').onclick = spin;
@@ -383,20 +793,39 @@ $('add').onclick = () => {
   inputs[inputs.length - 1].focus();
 };
 $('reset').onclick = () => { state.items.forEach(it => it.w = 1); renderRows(); changed(); };
+let shareTimer;
 $('share').onclick = async () => {
-  save();
-  const b = $('share');
-  try { await navigator.clipboard.writeText(location.href); b.textContent = 'Link gekopieerd'; }
-  catch { prompt('Kopieer deze link:', location.href); }
-  setTimeout(() => b.textContent = 'Kopieer deellink', 1800);
+  const hash = save();
+  const url = location.protocol === 'file:'
+    ? 'https://jappelflappel.github.io/rad-van-fortuin/' + hash
+    : location.href;
+  const button = $('share');
+  const label = $('share-label');
+  try {
+    await navigator.clipboard.writeText(url);
+    label.textContent = 'Link gekopieerd';
+    button.setAttribute('data-copied', '');
+    clearTimeout(shareTimer);
+    shareTimer = setTimeout(() => {
+      label.textContent = 'Kopieer deellink';
+      button.removeAttribute('data-copied');
+    }, 1800);
+  } catch {
+    prompt('Kopieer deze link:', url);
+  }
 };
 $('equal').checked = state.equal; $('remove').checked = state.remove;
 $('equal').onchange = e => { state.equal = e.target.checked; changed(); };
 $('remove').onchange = e => { state.remove = e.target.checked; changed(); };
 
-renderRows(); draw();
-addEventListener('resize', () => document.querySelectorAll('#rows textarea').forEach(grow));
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+const growRows = () => document.querySelectorAll('#rows textarea').forEach(grow);
+renderRows();
+draw();
+addEventListener('resize', growRows);
+document.fonts.ready.then(() => {
+  growRows();
+  if (!spinning) draw();
+});
 </script>
 </body>
 </html>
