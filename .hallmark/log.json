@@ -1,0 +1,15 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "squeeze",
+  "axes": "mid/geometric-sans/warm",
+  "nav": "top bar, wordmark and one outlined action",
+  "signature": "the fruit-coloured wheel, its winner set as a Gabarito figure",
+  "waived": [],
+  "prompt": "a wheel of fortune tool with adjustable weights per word",
+  "date": "2026-11-12"
+ }
+]
