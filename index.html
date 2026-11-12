@@ -387,15 +387,47 @@ canvas {
 .settings .note { margin: 0; padding: .625rem .875rem .875rem; border-top: 1px solid var(--separator); }
 .noscript { padding-block: 1rem; color: var(--secondary); }
 
-@media (max-width: 51rem) {
+#delete-dialog {
+  width: min(100% - 2rem, 23rem);
+  padding: 1.25rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1rem 3rem #0003;
+}
+#delete-dialog::backdrop { background: #0005; }
+#delete-dialog h2 { font-size: 1.25rem; }
+#delete-dialog p { margin: .5rem 0 1rem; color: var(--secondary); overflow-wrap: anywhere; }
+.dialog-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.dialog-actions .button { flex: 1; }
+.dialog-actions [value="delete"] { background: var(--action); color: var(--action-ink); }
+@media (hover: hover) {
+  .dialog-actions [value="delete"]:hover {
+    background: color-mix(in srgb, var(--action) 88%, var(--action-ink));
+  }
+}
+
+@media (max-width: 51rem), (pointer: coarse) and (max-width: 64rem) {
   .wrap { width: min(100% - 2.5rem, 36rem); }
-  main.wrap { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-block: 1rem 3rem; }
-  .stage { gap: 1.25rem; }
-  .wheel-wrap { width: min(100%, 29rem); }
+  main.wrap {
+    --bar-min-height: 4rem;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    padding-block: 1rem 3rem;
+  }
+  .stage {
+    min-block-size: calc(100vh - var(--bar-min-height) - 1rem);
+    min-block-size: calc(100lvh - var(--bar-min-height) - 1rem);
+    align-content: center;
+    gap: 1.25rem;
+  }
+  .wheel-wrap { width: min(100%, 29rem, max(8rem, calc(100svh - 13rem))); }
 }
 @media (max-width: 29rem) {
   .wrap { width: calc(100% - 2rem); }
-  .bar .wrap { min-height: 3.5rem; }
+  main.wrap { --bar-min-height: 3.75rem; }
+  .bar .wrap { min-height: 3.75rem; }
   #share { min-width: 2.75rem; padding-inline: .75rem; }
   .share-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   #share[data-copied] .share-label {
@@ -499,6 +531,17 @@ canvas {
   </section>
 </main>
 
+<dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-word">
+  <form method="dialog">
+    <h2 id="delete-title">Woord verwijderen?</h2>
+    <p id="delete-word"></p>
+    <div class="dialog-actions">
+      <button type="submit" class="button" value="cancel" autofocus>Annuleer</button>
+      <button type="submit" class="button" value="delete">Verwijder</button>
+    </div>
+  </form>
+</dialog>
+
 <script>
 const KEY = 'rad-van-fortuin-v1';
 const DEFAULT = { items: [
@@ -518,12 +561,14 @@ let paintedRotation = 0;
 let angularVelocity = 0;
 let spinFrame = 0;
 let selected = null;
+let pendingDelete = null;
 
 const $ = id => document.getElementById(id);
 const canvas = $('wheel'), ctx = canvas.getContext('2d');
 const stage = canvas.closest('.stage');
 const spinButton = $('spin');
 const result = $('result');
+const deleteDialog = $('delete-dialog');
 
 // Laatste vak krijgt een andere kleur als het anders naast dezelfde kleur zou liggen
 function wedge(i) {
@@ -702,7 +747,7 @@ function renderRows() {
         <button type="button" data-d="1" aria-label="Gewicht omhoog">+</button>
       </span>
       <span class="pct"></span>
-      <button type="button" class="del" aria-label="Verwijder">${CROSS}</button>`;
+      <button type="button" class="del" aria-label="Verwijder woord" aria-haspopup="dialog">${CROSS}</button>`;
     const text = row.querySelector('textarea'), num = row.querySelector('input');
     text.value = it.t;
     num.value = it.w;
@@ -717,17 +762,32 @@ function renderRows() {
       num.value = it.w; changed();
     });
     row.querySelector('.del').onclick = () => {
-      state.items.splice(i, 1);
-      renderRows();
-      changed();
-      const next = rows.children[Math.min(i, rows.children.length - 1)];
-      (next?.querySelector('.del') || $('add')).focus();
+      pendingDelete = it;
+      $('delete-word').textContent = it.t.trim() || 'Leeg woord';
+      deleteDialog.returnValue = '';
+      deleteDialog.showModal();
     };
     rows.appendChild(row);
     grow(text);
   });
   updatePct();
 }
+deleteDialog.addEventListener('close', () => {
+  const index = state.items.indexOf(pendingDelete);
+  pendingDelete = null;
+  if (index < 0) return;
+
+  if (deleteDialog.returnValue === 'delete') {
+    state.items.splice(index, 1);
+    renderRows();
+    changed();
+  }
+
+  const rows = $('rows');
+  const next = rows.children[Math.min(index, rows.children.length - 1)];
+  (next?.querySelector('.del') || $('add')).focus();
+});
+
 function updatePct() {
   const total = state.items.reduce((s, it) => s + it.w, 0);
   document.querySelectorAll('#rows .pct').forEach((el, i) => {
@@ -773,9 +833,9 @@ function spin() {
   const win = sl.find(slice => (x -= slice.w) < 0) || sl[sl.length - 1];
   const point = win.start + (win.end - win.start) * (0.15 + Math.random() * 0.7);
   const distance = ((-Math.PI / 2 - point - rot) % TAU + TAU) % TAU +
-    TAU * (3 + Math.floor(Math.random() * 2));
+    TAU * (5 + Math.floor(Math.random() * 2));
   const target = rot + distance;
-  const rate = 2 * Math.PI / 1.85;
+  const rate = TAU / 3.55;
   const initialVelocity = spinFrame ? angularVelocity : rate * distance * 0.4;
   const response = initialVelocity - rate * distance;
 
